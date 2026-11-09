@@ -1,0 +1,40 @@
+{
+  "summary": "The scan found two HIGH-risk security problems: a public S3 bucket (test-public-bucket-394321) and a security group (sg-0be9ea0bea05d32b9) that opens SSH to the whole internet, plus a LOW-risk note that its web port is open publicly. No idle EC2 servers were found. Month-to-date spend is about $0.04 USD, so no meaningful cost waste was detected.",
+  "findings": [
+    {
+      "problem": "S3 bucket has a bucket policy that allows public access, and Block Public Access is not fully on.",
+      "resource": "test-public-bucket-394321",
+      "category": "security",
+      "risk_level": "HIGH",
+      "estimated_monthly_saving_usd": null,
+      "suggested_fix": "Confirm the bucket holds no sensitive data. If it doesn't need to be public, remove the public statement from the bucket policy and turn on S3 Block Public Access for the bucket and account."
+    },
+    {
+      "problem": "Security group allows SSH (port 22) from the whole internet (0.0.0.0/0).",
+      "resource": "sg-0be9ea0bea05d32b9",
+      "category": "security",
+      "risk_level": "HIGH",
+      "estimated_monthly_saving_usd": null,
+      "suggested_fix": "Restrict the port 22 rule to your own IP range or a bastion host security group, or use AWS Systems Manager Session Manager instead of SSH."
+    },
+    {
+      "problem": "Security group allows web traffic (port 80) from the whole internet. This is usually intended, but it is unencrypted HTTP.",
+      "resource": "sg-0be9ea0bea05d32b9",
+      "category": "security",
+      "risk_level": "LOW",
+      "estimated_monthly_saving_usd": null,
+      "suggested_fix": "If the service is public, keep it and serve HTTPS (port 443) with a load balancer or CloudFront. Otherwise restrict port 80 to known sources."
+    }
+  ],
+  "spend_month_to_date_usd": 0.042,
+  "checks_not_covered": [
+    "IAM permissions and overly broad roles or users",
+    "Encryption settings for S3, EBS, and RDS",
+    "Regions other than those the tools scan",
+    "Public RDS databases, load balancers, and other non-security-group exposure",
+    "CloudTrail, GuardDuty, and other logging/monitoring status",
+    "Unused resources such as unattached EBS volumes, unused Elastic IPs, or idle RDS instances",
+    "Cost Explorer covers only month-to-date (Nov 1–10, 2026); the cost tool reports only the top services, so smaller spend may be missed",
+    "Whether the security group or bucket are actually in use"
+  ]
+}
