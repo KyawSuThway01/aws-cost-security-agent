@@ -1,3 +1,4 @@
 boto3
 strands-agents[anthropic]
 python-dotenv
+jiter==0.10.0
