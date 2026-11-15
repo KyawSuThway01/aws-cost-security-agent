@@ -225,5 +225,8 @@ __marimo__/
 *.pem
 *.csv
 
+# Local audit log
+audit/
+
 
 
