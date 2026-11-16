@@ -70,3 +70,57 @@ python -m pytest -q
 - Redaction and the report checks are not a full security review.
 - IAM, encryption and logging settings are not checked. The report lists what was
   not covered.
+
+
+## How to run
+
+You need Python 3.12, an AWS account, and an Anthropic API key.
+
+1. Create a virtual environment and install the packages.
+
+```
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install -r requirements.txt
+```
+
+2. Create a `.env` file in the project folder with these three names.
+   Never commit this file. It is in `.gitignore`.
+
+```
+MODEL_PROVIDER=anthropic
+MODEL_ID=claude-haiku-5-5
+ANTHROPIC_API_KEY=your-key-here
+```
+
+3. Set up AWS CLI credentials. The default profile must be a read-only user
+   (see `infra/scanner_policy.json` for the policy used).
+
+4. Run the agent and print the report.
+
+```
+python -m agent.report
+```
+
+A saved example is in `docs/sample_report.json`.
+
+### Run one scanner on its own
+
+```
+python -m tools.s3_scanner
+```
+
+### Fix a public bucket (human approval)
+
+This needs a `fixer` AWS profile that assumes the fixer role with MFA.
+The first command is a dry run and changes nothing.
+
+```
+python -m fixer.cli your-bucket-name
+python -m fixer.cli your-bucket-name --apply
+```
+
+## Cost
+
+Each report run calls Cost Explorer once, which costs about $0.01.
+The model API has its own cost, which depends on the model you choose.
