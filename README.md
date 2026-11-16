@@ -36,3 +36,37 @@ flowchart LR
     end
     Fixer --> Audit["Audit log"]
 ```
+
+
+## Safety design
+
+- **Read-only agent.** The agent has four read tools and no write tool. Its IAM user
+  (`agent-readonly`) can only read. Asking it to list IAM users returns `AccessDenied`.
+- **Separate fixer.** Only the `fixer/` code can change anything. The agent cannot
+  call it.
+- **Human in the loop.** The fixer re-checks the bucket live, shows a dry run by
+  default, and needs the human to type the exact bucket name before it does anything.
+- **MFA and least privilege.** The change uses a separate role (`agent-fixer-s3`).
+  It needs an MFA code, can only turn on Block Public Access, and only on buckets
+  whose names start with `test-`. The read-only user cannot assume this role.
+- **Secret redaction.** Every tool output goes through a redaction step before the
+  agent sees it. It is a pattern match, so it can miss unusual secrets.
+- **Audit log.** Every proposed, approved, applied and failed fix is written to a
+  local log file. Moving it to a cloud store is planned.
+- **No guessing.** If a tool has no data or is denied, the report says so. Savings
+  are `null` unless they can be calculated from tool data.
+
+## Tests
+
+The tests use fake AWS objects, so they never call real AWS or cost money.
+
+```
+python -m pytest -q
+```
+
+## Limits
+
+- Scanners cover one region only.
+- Redaction and the report checks are not a full security review.
+- IAM, encryption and logging settings are not checked. The report lists what was
+  not covered.
