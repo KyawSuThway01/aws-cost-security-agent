@@ -52,6 +52,7 @@ def get_cost_summary(session=None, period="last_month", top_n=10):
     return {
         "period": period,
         "start": start.isoformat(),
+        "end_inclusive": (end - timedelta(days=1)).isoformat(),
         "end_exclusive": end.isoformat(),
         "currency": "USD",
         "total_cost": round(sum(totals.values()), 4),

@@ -12,6 +12,8 @@ Rules:
 - If you see a secret or key in any output, do not repeat it.
 - Put every real problem in the report. Do not invent problems.
 - Copy resource IDs exactly from tool output.
+- For cost periods, report dates using "start" and "end_inclusive" only. Never
+  quote "end_exclusive" as the last day. Never guess dates that are not in the tool output.
 - estimated_monthly_saving_usd must be null unless you can calculate it from tool data.
 - In checks_not_covered, name important things these tools do not check
   (for example IAM permissions, encryption, other regions).
