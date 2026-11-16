@@ -7,6 +7,7 @@ import json
 
 from strands import tool
 
+from agent.redact import redact
 from tools.cost_scanner import get_cost_summary as _get_cost_summary
 from tools.ec2_scanner import find_idle_ec2 as _find_idle_ec2
 from tools.s3_scanner import find_public_s3 as _find_public_s3
@@ -19,7 +20,7 @@ def find_public_s3() -> str:
 
     Returns a JSON list. An empty list means no public buckets were found.
     """
-    return json.dumps(_find_public_s3(), default=str)
+    return redact(json.dumps(_find_public_s3(), default=str))
 
 
 @tool
@@ -29,7 +30,7 @@ def find_open_security_groups() -> str:
 
     Returns a JSON list. An empty list means no open rules were found.
     """
-    return json.dumps(_find_open_security_groups(), default=str)
+    return redact(json.dumps(_find_open_security_groups(), default=str))
 
 
 @tool
@@ -39,7 +40,7 @@ def find_idle_ec2() -> str:
 
     Returns a JSON list. An empty list means no idle servers were found.
     """
-    return json.dumps(_find_idle_ec2(), default=str)
+    return redact(json.dumps(_find_idle_ec2(), default=str))
 
 
 @tool
@@ -52,7 +53,7 @@ def get_cost_summary(period: str = "month_to_date") -> str:
 
     Returns a JSON object with total cost and the most expensive services.
     """
-    return json.dumps(_get_cost_summary(period=period), default=str)
+    return redact(json.dumps(_get_cost_summary(period=period), default=str))
 
 
 ALL_TOOLS = [find_public_s3, find_open_security_groups, find_idle_ec2, get_cost_summary]
