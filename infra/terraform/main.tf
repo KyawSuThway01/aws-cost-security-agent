@@ -29,3 +29,9 @@ resource "aws_sns_topic" "reports" {
 output "topic_arn" {
   value = aws_sns_topic.reports.arn
 }
+
+resource "aws_sns_topic_subscription" "report_email" {
+  topic_arn = aws_sns_topic.reports.arn
+  protocol  = "email"
+  endpoint  = var.report_email
+}
