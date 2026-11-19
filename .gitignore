@@ -234,3 +234,4 @@ audit/
 *.tfstate.*
 *.tfvars
 crash.log
+build/
